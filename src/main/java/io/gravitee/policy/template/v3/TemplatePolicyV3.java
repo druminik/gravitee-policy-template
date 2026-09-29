@@ -57,6 +57,9 @@ public class TemplatePolicyV3 {
     }
 
     protected boolean shouldInterrupt(HttpHeaders headers) {
-        return headers.getAll(TEMPLATE_POLICY_HEADER).stream().anyMatch(header -> header.equalsIgnoreCase(configuration.getErrorKey()));
+        return headers
+            .getAll(TEMPLATE_POLICY_HEADER)
+            .stream()
+            .anyMatch(header -> header.equalsIgnoreCase(configuration.getErrorKey()));
     }
 }
