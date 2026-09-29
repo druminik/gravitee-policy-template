@@ -28,25 +28,19 @@
     <parent>
         <groupId>io.gravitee</groupId>
         <artifactId>gravitee-parent</artifactId>
-        <version>22.1.0</version>
+        <!-- Same parent as gravitee-api-management 4.12.x -->
+        <version>24.0.1</version>
     </parent>
 
     <properties>
-        <!-- TODO: Check version regarding APIM / AM target -->
-        <!-- Gravitee dependencies for APIM / AM >= 4.4.x -->
-        <gravitee-bom.version>8.0.4</gravitee-bom.version>
-        <gravitee-common.version>4.4.0</gravitee-common.version>
-        <gravitee-gateway-api.version>3.5.0</gravitee-gateway-api.version>
+        <!-- Gravitee dependencies for APIM >= 4.12.x -->
+        <!-- One version drives the SDK, test plugins and the APIM BOM, so they always match -->
+        <gravitee-apim.version>4.12.20</gravitee-apim.version>
+
+        <!-- Same values as gravitee-api-management 4.12.x -->
+        <gravitee-bom.version>9.0.0</gravitee-bom.version>
+        <gravitee-common.version>5.2.0</gravitee-common.version>
         <gravitee-policy-api.version>1.11.0</gravitee-policy-api.version>
-        <gravitee-apim.version>4.4.0-SNAPSHOT</gravitee-apim.version>
-
-        <!-- Gravitee dependencies for APIM / AM >= 4.1.x -->
-<!--        <gravitee-bom.version>6.0.47</gravitee-bom.version>-->
-<!--        <gravitee-common.version>3.4.1</gravitee-common.version>-->
-<!--        <gravitee-gateway-api.version>3.2.3</gravitee-gateway-api.version>-->
-<!--        <gravitee-policy-api.version>1.11.0</gravitee-policy-api.version>-->
-<!--        <gravitee-apim.version>4.1.17</gravitee-apim.version>-->
-
 
         <!-- Maven plugins -->
         <maven-plugin-assembly.version>3.7.1</maven-plugin-assembly.version>
@@ -55,19 +49,22 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- Import bom to properly inherit all dependencies -->
+            <!-- APIM BOM first: it aligns gateway-api, gravitee-node, Vert.x, etc. with the tests SDK.
+                 First import wins on overlaps, so keep this one above gravitee-bom. -->
+            <dependency>
+                <groupId>io.gravitee.apim</groupId>
+                <artifactId>gravitee-apim-bom</artifactId>
+                <version>${gravitee-apim.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            <!-- Fills in everything else (assertj, ...) -->
             <dependency>
                 <groupId>io.gravitee</groupId>
                 <artifactId>gravitee-bom</artifactId>
                 <version>${gravitee-bom.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>io.gravitee.gateway</groupId>
-                <artifactId>gravitee-gateway-api</artifactId>
-                <version>${gravitee-gateway-api.version}</version>
-                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>io.gravitee.policy</groupId>
@@ -87,15 +84,17 @@
     <dependencies>
         <!-- Provided scope -->
         <dependency>
+            <!-- Version comes from gravitee-apim-bom.
+                 If Maven reports a missing version here, add
+                 <version>6.3.0</version> (value used by gravitee-api-management 4.12.x). -->
             <groupId>io.gravitee.gateway</groupId>
             <artifactId>gravitee-gateway-api</artifactId>
+            <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>io.gravitee.policy</groupId>
             <artifactId>gravitee-policy-api</artifactId>
         </dependency>
-
         <dependency>
             <groupId>io.gravitee.common</groupId>
             <artifactId>gravitee-common</artifactId>
@@ -115,7 +114,6 @@
             <version>${gravitee-apim.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>io.gravitee.apim.plugin.entrypoint</groupId>
             <artifactId>gravitee-apim-plugin-entrypoint-http-proxy</artifactId>
@@ -128,7 +126,6 @@
             <version>${gravitee-apim.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
