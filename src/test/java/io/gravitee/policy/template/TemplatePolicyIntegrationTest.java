@@ -31,13 +31,14 @@ import io.gravitee.apim.gateway.tests.sdk.annotations.GatewayTest;
 import io.gravitee.apim.gateway.tests.sdk.connector.EndpointBuilder;
 import io.gravitee.apim.gateway.tests.sdk.connector.EntrypointBuilder;
 import io.gravitee.common.http.HttpStatusCode;
+import io.gravitee.gateway.reactive.api.connector.endpoint.EndpointConnectorConfiguration;
 import io.gravitee.plugin.endpoint.EndpointConnectorPlugin;
 import io.gravitee.plugin.endpoint.http.proxy.HttpProxyEndpointConnectorFactory;
 import io.gravitee.plugin.entrypoint.EntrypointConnectorPlugin;
 import io.gravitee.plugin.entrypoint.http.proxy.HttpProxyEntrypointConnectorFactory;
 import io.gravitee.policy.template.configuration.TemplatePolicyConfiguration;
+import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpMethod;
-import io.vertx.rxjava3.core.buffer.Buffer;
 import io.vertx.rxjava3.core.http.HttpClient;
 import io.vertx.rxjava3.core.http.HttpClientRequest;
 import java.util.Map;
@@ -55,7 +56,13 @@ public class TemplatePolicyIntegrationTest extends AbstractPolicyTest<TemplatePo
 
     @Override
     public void configureEndpoints(Map<String, EndpointConnectorPlugin<?, ?>> endpoints) {
-        endpoints.putIfAbsent("http-proxy", EndpointBuilder.build("http-proxy", HttpProxyEndpointConnectorFactory.class));
+        endpoints.putIfAbsent(
+            "http-proxy",
+            EndpointBuilder.<HttpProxyEndpointConnectorFactory, EndpointConnectorConfiguration>build(
+                "http-proxy",
+                HttpProxyEndpointConnectorFactory.class
+            )
+        );
     }
 
     @Test
